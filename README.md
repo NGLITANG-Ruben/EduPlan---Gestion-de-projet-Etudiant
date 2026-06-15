@@ -1,4 +1,4 @@
-# ProjectFlow — Version Simplifiée (Sans API séparée)
+# Projet EduPlan
 
 ## Structure du projet
 
@@ -56,7 +56,7 @@ cd C:\Users\VotreNom\Downloads\projectflow-simple
 cd /home/votreNom/Downloads/projectflow-simple
 ```
 
-> ⚠️ TOUTES les commandes suivantes se font dans ce dossier.
+>  TOUTES les commandes suivantes se font dans ce dossier.
 
 Vérifiez que vous êtes au bon endroit avec :
 ```

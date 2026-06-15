@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% set active_page = 'taches' %}
+{% block title %}EduPlan — Mes Taches{% endblock %}
+
+{% block header_content %}
+<div class="header-filters">
+    <form method="GET" class="filters-form">
+        <select name="statut" class="filter-select" onchange="this.form.submit()">
+            <option value="">Tous statuts</option>
+            <option value="a_faire" {% if filtre_statut=='a_faire' %}selected{% endif %}>A faire</option>
+            <option value="en_cours" {% if filtre_statut=='en_cours' %}selected{% endif %}>En cours</option>
+            <option value="termine" {% if filtre_statut=='termine' %}selected{% endif %}>Termine</option>
+        </select>
+        <select name="priorite" class="filter-select" onchange="this.form.submit()">
+            <option value="">Toutes priorites</option>
+            <option value="haute" {% if filtre_priorite=='haute' %}selected{% endif %}>Haute</option>
+            <option value="normale" {% if filtre_priorite=='normale' %}selected{% endif %}>Normale</option>
+            <option value="basse" {% if filtre_priorite=='basse' %}selected{% endif %}>Basse</option>
+        </select>
+    </form>
+</div>
+{% endblock %}
+
+{% block header_actions %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Mes Taches</h1>
+        <p class="page-subtitle">{{ taches|length }} tache{{ 's' if taches|length != 1 else '' }} vous sont assignees</p>
+    </div>
+</div>
+
+{% if taches %}
+{% set groups = [('en_cours','En cours'),('a_faire','A faire'),('termine','Terminees')] %}
+{% set status_colors = {'a_faire':'badge-gray','en_cours':'badge-yellow','termine':'badge-green'} %}
+{% set status_labels = {'a_faire':'A faire','en_cours':'En cours','termine':'Termine'} %}
+{% set prio_colors = {'haute':'#ef4444','normale':'#f59e0b','basse':'#10b981'} %}
+
+{% for statut, label in groups %}
+{% set group_tasks = taches | selectattr('statut', 'equalto', statut) | list %}
+{% if group_tasks %}
+<div class="taches-group">
+    <h3 class="taches-group-title">
+        {{ label }} <span class="taches-group-count">({{ group_tasks|length }})</span>
+    </h3>
+    <div class="taches-list">
+    {% for t in group_tasks %}
+    <a href="{{ url_for('projet_detail', projet_id=t.projet_id) }}" class="tache-card-link">
+        <div class="tache-card">
+            <div class="tache-priority-dot" style="background:{{ prio_colors.get(t.priorite,'#9ca3af') }};"></div>
+            <div class="tache-card-content">
+                <div class="tache-card-title">{{ t.titre }}</div>
+                <div class="tache-card-projet">Projet: {{ t.projet_titre }}</div>
+            </div>
+            <div class="tache-card-right">
+                {% if t.echeance %}
+                <span class="tache-card-date">
+                    <img src="{{ url_for('static', filename='img/calendarIcon.svg') }}" alt="Date" class="inline-icon">
+                    {{ t.echeance[:10] }}
+                </span>
+                {% endif %}
+                <span class="badge {{ status_colors.get(t.statut,'badge-gray') }}">{{ status_labels.get(t.statut,t.statut) }}</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% else %}
+<div class="empty-state">
+    <img src="{{ url_for('static', filename='img/listIcon.svg') }}" alt="Aucune tache" class="empty-state-icon">
+    <p class="empty-state-title">Aucune tache trouvee</p>
+    <p class="empty-state-subtitle">Vous n'avez aucune tache assignee pour ces filtres.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% set active_page = 'projets' %}
+{% block title %}EduPlan — Projets{% endblock %}
+
+{% block header_content %}
+<div class="header-search-wrapper">
+    <form method="GET" action="{{ url_for('projets') }}" class="header-search-form">
+        <div class="header-search">
+            <span class="search-icon">
+                <img src="{{ url_for('static', filename='img/addIcon.svg') }}" alt="Rechercher" style="width:14px;height:14px;opacity:0.6;">
+            </span>
+            <input type="text" name="search" value="{{ search }}" placeholder="Rechercher un projet...">
+        </div>
+        <select name="statut" class="filter-select" onchange="this.form.submit()">
+            <option value="">Tous statuts</option>
+            <option value="actif" {% if statut_filtre=='actif' %}selected{% endif %}>Actif</option>
+            <option value="en_pause" {% if statut_filtre=='en_pause' %}selected{% endif %}>En pause</option>
+            <option value="termine" {% if statut_filtre=='termine' %}selected{% endif %}>Termine</option>
+        </select>
+    </form>
+</div>
+{% endblock %}
+
+{% block header_actions %}
+<button onclick="openCreateModal()" class="btn btn-primary btn-sm">+ Nouveau projet</button>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Mes Projets</h1>
+        <p class="page-subtitle">{{ total }} projet{{ 's' if total != 1 else '' }} trouve{{ 's' if total != 1 else '' }}</p>
+    </div>
+</div>
+
+{% set status_colors = {'actif':'badge-blue','termine':'badge-green','en_pause':'badge-yellow'} %}
+{% set status_labels = {'actif':'Actif','termine':'Termine','en_pause':'En pause'} %}
+
+{% if projets %}
+<div class="projects-grid">
+    {% for p in projets %}
+    {% set pct = ((p.nb_terminees / p.nb_taches * 100)|int) if p.nb_taches > 0 else 0 %}
+    {% set is_creator = p.createur_id == session.get('user_id') %}
+    <div class="project-card" onclick="window.location.href='{{ url_for('projet_detail', projet_id=p.id) }}'">
+        <div class="project-card-header">
+            <div>
+                <div class="project-title">{{ p.titre }}</div>
+                <span class="badge {{ status_colors.get(p.statut,'badge-gray') }}">{{ status_labels.get(p.statut,p.statut) }}</span>
+            </div>
+            {% if is_creator %}
+            <div class="project-actions" onclick="event.stopPropagation()">
+                <button onclick="openEditModal({{ p.id }}, '{{ p.titre|e }}', '{{ p.description|e }}', '{{ p.statut }}')" class="btn btn-secondary btn-sm">Modifier</button>
+                <form method="POST" action="{{ url_for('supprimer_projet', projet_id=p.id) }}" onsubmit="return confirm('Supprimer ce projet ?')" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        <p class="project-desc">{{ p.description or 'Aucune description' }}</p>
+        <div class="project-meta">
+            <span>Createur: {{ p.createur_nom }}</span>
+            <span>Taches: {{ p.nb_taches }} tache{{ 's' if p.nb_taches != 1 else '' }}</span>
+        </div>
+        <div class="project-progress">
+            <div class="project-progress-text"><span>Progression</span><span>{{ pct }}%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:{{ pct }}%"></div></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if pages > 1 %}
+<div class="pagination">
+    {% if page > 1 %}<a href="?page={{ page-1 }}&search={{ search }}&statut={{ statut_filtre }}" class="page-btn">←</a>{% endif %}
+    {% for i in range(1, pages+1) %}
+    <a href="?page={{ i }}&search={{ search }}&statut={{ statut_filtre }}" class="page-btn {% if i == page %}active{% endif %}">{{ i }}</a>
+    {% endfor %}
+    {% if page < pages %}<a href="?page={{ page+1 }}&search={{ search }}&statut={{ statut_filtre }}" class="page-btn">→</a>{% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+    <img src="{{ url_for('static', filename='img/listIcon.svg') }}" alt="Aucun projet" class="empty-state-icon">
+    <p class="empty-state-title">Aucun projet trouve</p>
+    <button onclick="openCreateModal()" class="btn btn-primary">+ Creer un projet</button>
+</div>
+{% endif %}
+
+<!-- Modal Creation / Edition -->
+<div id="project-modal" class="modal-backdrop" onclick="if(event.target===this){closeModal()}">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modal-title">Nouveau projet</h3>
+            <button onclick="closeModal()" class="modal-close">×</button>
+        </div>
+        <form id="project-form" method="POST" action="{{ url_for('creer_projet') }}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Titre <span class="required">*</span></label>
+                    <input type="text" name="titre" id="form-titre" class="form-control" placeholder="Nom du projet" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" id="form-desc" class="form-control" rows="4" placeholder="Decrivez le projet..."></textarea>
+                </div>
+                <div class="form-group" id="statut-group" style="display:none;">
+                    <label class="form-label">Statut</label>
+                    <select name="statut" id="form-statut" class="form-control">
+                        <option value="actif">Actif</option>
+                        <option value="en_pause">En pause</option>
+                        <option value="termine">Termine</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeModal()" class="btn btn-secondary">Annuler</button>
+                <button type="submit" id="btn-submit" class="btn btn-primary">Creer le projet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openCreateModal() {
+    document.getElementById('modal-title').textContent = 'Nouveau projet';
+    document.getElementById('btn-submit').textContent = 'Creer le projet';
+    document.getElementById('form-titre').value = '';
+    document.getElementById('form-desc').value = '';
+    document.getElementById('statut-group').style.display = 'none';
+    document.getElementById('project-form').action = "{{ url_for('creer_projet') }}";
+    const modal = document.getElementById('project-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function openEditModal(id, titre, desc, statut) {
+    document.getElementById('modal-title').textContent = 'Modifier le projet';
+    document.getElementById('btn-submit').textContent = 'Enregistrer';
+    document.getElementById('form-titre').value = titre;
+    document.getElementById('form-desc').value = desc;
+    document.getElementById('form-statut').value = statut;
+    document.getElementById('statut-group').style.display = 'block';
+    document.getElementById('project-form').action = `/projets/${id}/modifier`;
+    const modal = document.getElementById('project-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function closeModal() {
+    const modal = document.getElementById('project-modal');
+    modal.classList.remove('show');
+    setTimeout(() => modal.style.display = 'none', 200);
+}
+</script>
+{% endblock %}

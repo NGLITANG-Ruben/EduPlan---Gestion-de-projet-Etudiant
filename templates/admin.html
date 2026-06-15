@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% set active_page = 'admin' %}
+{% block title %}EduPlan — Administration{% endblock %}
+{% block header_content %}<h1 style="font-size:1rem;font-weight:700;">Administration</h1>{% endblock %}
+{% block header_actions %}
+<form method="GET" style="display:flex;align-items:center;gap:0.5rem;">
+    <div class="header-search">
+        <span class="search-icon">R</span>
+        <input type="text" name="search" value="{{ search }}" placeholder="Rechercher un utilisateur...">
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Chercher</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:1.5rem;">
+    <h1 class="page-title">Gestion des Utilisateurs</h1>
+    <p class="page-subtitle">{{ users|length }} utilisateur{{ 's' if users|length != 1 else '' }}</p>
+</div>
+
+<div class="card">
+    <table style="width:100%;border-collapse:collapse;">
+        <thead>
+            <tr style="border-bottom:2px solid var(--border-light);text-align:left;">
+                <th style="padding:0.75rem;font-size:0.75rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;">Utilisateur</th>
+                <th style="padding:0.75rem;font-size:0.75rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;">Email</th>
+                <th style="padding:0.75rem;font-size:0.75rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;">Role</th>
+                <th style="padding:0.75rem;font-size:0.75rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;">Inscrit le</th>
+                <th style="padding:0.75rem;font-size:0.75rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;">Actions</th>
+             </tr>
+        </thead>
+        <tbody>
+        {% for u in users %}
+        <tr style="border-bottom:1px solid var(--border-light);" onmouseover="this.style.background='var(--bg-cream)'" onmouseout="this.style.background='white'">
+            <td style="padding:0.75rem;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--text-dark);flex-shrink:0;">{{ u.nom[:2].upper() }}</div>
+                    <span style="font-size:0.875rem;font-weight:600;">{{ u.nom }}</span>
+                    {% if u.id == session.get('user_id') %}<span class="badge badge-blue" style="font-size:0.65rem;">Vous</span>{% endif %}
+                </div>
+             </td>
+            <td style="padding:0.75rem;font-size:0.875rem;color:var(--text-soft);">{{ u.email }}</td>
+            <td style="padding:0.75rem;">
+                <span class="badge {% if u.role == 'administrateur' %}badge-purple{% else %}badge-gray{% endif %}">
+                    {% if u.role == 'administrateur' %}Admin{% else %}Membre{% endif %}
+                </span>
+             </td>
+            <td style="padding:0.75rem;font-size:0.8125rem;color:var(--text-soft);">{{ u.date_inscription[:10] if u.date_inscription else '—' }}</td>
+            <td style="padding:0.75rem;">
+                {% if u.id != session.get('user_id') %}
+                <form method="POST" action="{{ url_for('changer_role', user_id=u.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-secondary btn-sm">
+                        {% if u.role == 'administrateur' %}Retrograder{% else %}Promouvoir{% endif %}
+                    </button>
+                </form>
+                {% else %}
+                <span style="font-size:0.75rem;color:var(--text-soft);">—</span>
+                {% endif %}
+             </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+</div>
+{% endblock %}

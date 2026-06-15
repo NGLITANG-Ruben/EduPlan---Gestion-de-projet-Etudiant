@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{{ trans.app_name }} — {{ trans.welcome_title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new_palette.css') }}">
+    <style>
+        .welcome-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .welcome-card {
+            max-width: 600px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-light);
+        }
+        .lang-selector {
+            position: fixed;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+        .lang-btn {
+            background: var(--bg-cream);
+            border: 1px solid var(--border-light);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+        .lang-btn:hover {
+            background: var(--blue-pale);
+            border-color: var(--blue-pale);
+        }
+        .devise {
+            font-size: 0.875rem;
+            color: var(--text-soft);
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .btn-welcome {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 8px;
+            transition: all 0.2s;
+        }
+        .btn-primary-welcome {
+            background: var(--blue-pale);
+            color: var(--text-dark);
+        }
+        .btn-primary-welcome:hover {
+            background: var(--blue-pale-hover);
+            transform: translateY(-2px);
+        }
+        .btn-outline-welcome {
+            border: 2px solid var(--blue-pale);
+            color: var(--text-dark);
+            background: transparent;
+        }
+        .btn-outline-welcome:hover {
+            background: var(--blue-pale);
+        }
+        .skip-link {
+            display: inline-block;
+            margin-top: 1rem;
+            font-size: 0.8125rem;
+            color: var(--text-soft);
+            text-decoration: none;
+        }
+        .footer-credit {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: var(--text-soft);
+            text-align: center;
+        }
+        @media (max-width: 640px) {
+            .welcome-card { padding: 1.5rem; }
+            .btn-welcome { display: block; margin: 8px 0; text-align: center; }
+        }
+    </style>
+</head>
+<body style="background: var(--bg-cream);">
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center;">{{ trans.app_name }}</h1>
+            <div class="devise">{{ trans.devise }}</div>
+            
+            <div id="presentation-step">
+                <p style="text-align: center; margin-bottom: 2rem; line-height: 1.6;">
+                    {{ trans.description_line1 }}<br>
+                    {{ trans.description_line2 }}
+                </p>
+                <div style="text-align: center;">
+                    <a href="{{ url_for('login') }}" class="btn-welcome btn-primary-welcome">{{ trans.btn_login }}</a>
+                    <a href="{{ url_for('register') }}" class="btn-welcome btn-outline-welcome">{{ trans.btn_signup }}</a>
+                </div>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="{{ url_for('skip_welcome') }}" class="skip-link">{{ trans.skip }}</a>
+                </div>
+            </div>
+        </div>
+        <div class="lang-selector">
+            <a href="{{ url_for('set_language', lang='fr') }}" class="lang-btn">Francais</a>
+            <a href="{{ url_for('set_language', lang='en') }}" class="lang-btn">English</a>
+        </div>
+        <div class="footer-credit">
+            {{ trans.footer_credit }}
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% set active_page = 'dashboard' %}
+
+{% block title %}EduPlan — Tableau de bord{% endblock %}
+
+{% block header_content %}
+<h1>Tableau de bord</h1>
+{% endblock %}
+
+{% block header_actions %}
+<a href="{{ url_for('projets') }}" class="btn btn-primary btn-sm">+ Nouveau projet</a>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1 class="dashboard-greeting">Bonjour, {{ session.get('user_nom', '').split(' ')[0] }}</h1>
+    <p class="dashboard-date" id="current-date"></p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <img src="{{ url_for('static', filename='img/totalBookingIcon.svg') }}" alt="Projets actifs" class="stat-icon-img">
+        </div>
+        <div>
+            <div class="stat-label">Projets actifs</div>
+            <div class="stat-value">{{ stats.projets_actifs }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <img src="{{ url_for('static', filename='img/totalRevenueIcon.svg') }}" alt="Taches en cours" class="stat-icon-img">
+        </div>
+        <div>
+            <div class="stat-label">Taches en cours</div>
+            <div class="stat-value">{{ stats.taches_en_cours }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <img src="{{ url_for('static', filename='img/calendarIcon.svg') }}" alt="Taches terminees" class="stat-icon-img">
+        </div>
+        <div>
+            <div class="stat-label">Taches terminees</div>
+            <div class="stat-value">{{ stats.taches_terminees }}</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <img src="{{ url_for('static', filename='img/addIcon.svg') }}" alt="Assignees a moi" class="stat-icon-img">
+        </div>
+        <div>
+            <div class="stat-label">Assignees a moi</div>
+            <div class="stat-value">{{ stats.mes_taches }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-two-columns">
+    <div class="card">
+        <div class="card-header">
+            <h2>Projets recents</h2>
+            <a href="{{ url_for('projets') }}" class="btn btn-secondary btn-sm">Voir tout</a>
+        </div>
+        {% if projets %}
+            {% for p in projets %}
+            {% set pct = ((p.nb_terminees / p.nb_taches * 100) | int) if p.nb_taches > 0 else 0 %}
+            {% set status_color = {'actif':'badge-blue','termine':'badge-green','en_pause':'badge-yellow'} %}
+            {% set status_label = {'actif':'Actif','termine':'Termine','en_pause':'En pause'} %}
+            <a href="{{ url_for('projet_detail', projet_id=p.id) }}" class="projet-card-link">
+                <div class="projet-card">
+                    <div class="projet-card-header">
+                        <span class="projet-card-title">{{ p.titre }}</span>
+                        <span class="badge {{ status_color.get(p.statut, 'badge-gray') }}">{{ status_label.get(p.statut, p.statut) }}</span>
+                    </div>
+                    <div class="projet-card-meta">par {{ p.createur_nom }} · {{ p.nb_taches }} tache{{ 's' if p.nb_taches != 1 else '' }}</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:{{ pct }}%"></div></div>
+                    <div class="projet-card-progress">{{ pct }}% complete</div>
+                </div>
+            </a>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <img src="{{ url_for('static', filename='img/listIcon.svg') }}" alt="Aucun projet" class="empty-state-icon">
+                <p class="empty-state-title">Aucun projet</p>
+                <a href="{{ url_for('projets') }}" class="btn btn-primary btn-sm">Creer un projet</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Taches assignees</h2>
+            <a href="{{ url_for('mes_taches') }}" class="btn btn-secondary btn-sm">Voir tout</a>
+        </div>
+        {% if mes_taches %}
+            {% set priority_colors = {'haute':'#ef4444','normale':'#f59e0b','basse':'#10b981'} %}
+            {% for t in mes_taches %}
+            <div class="tache-item">
+                <div class="tache-priority" style="background:{{ priority_colors.get(t.priorite,'#9ca3af') }};"></div>
+                <div class="tache-content">
+                    <div class="tache-title">{{ t.titre }}</div>
+                    <div class="tache-projet">Projet: {{ t.projet_titre }}</div>
+                </div>
+                {% if t.echeance %}
+                <div class="tache-date">
+                    <img src="{{ url_for('static', filename='img/calendarIcon.svg') }}" alt="Date" class="inline-icon">
+                    {{ t.echeance[:10] }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-taches">Aucune tache assignee</div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+</script>
+{% endblock %}

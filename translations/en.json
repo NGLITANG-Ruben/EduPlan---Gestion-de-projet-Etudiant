@@ -1,0 +1,18 @@
+{
+    "app_name": "EduPlan",
+    "devise": "tracking-planning-task",
+    "welcome_title": "Welcome to EduPlan",
+    "choose_lang": "Choose your language",
+    "description_line1": "EduPlan helps you manage your student projects simply and effectively.",
+    "description_line2": "Plan, track and succeed in your team work, from start to delivery.",
+    "btn_signup": "Sign up",
+    "btn_login": "Log in",
+    "skip": "Skip introduction",
+    "presentation_title": "About EduPlan",
+    "presentation_text": "EduPlan is a project management platform designed for students. It allows you to create projects, assign tasks, track progress and collaborate with your team. Simple, intuitive and effective.",
+    "footer_credit": "Designed by NGLITANG Ruben - ENSPD - Dynamic Web Programming Project"
+}
+
+
+
+

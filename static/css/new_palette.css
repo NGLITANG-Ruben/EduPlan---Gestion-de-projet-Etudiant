@@ -1,0 +1,94 @@
+:root {
+    --bg-cream: #FDFBF7;
+    --bg-beige: #F5F0E8;
+    --blue-pale: #C5DFF8;
+    --blue-pale-hover: #A8C9E8;
+    --card-bg: #FFFFFF;
+    --text-dark: #2C2C2C;
+    --text-soft: #6B6B6B;
+    --border-light: #E8E2D8;
+    --accent: #8BB3D0;
+    --navy-blue: #1E3A8A;
+    --dark-blue: #1E40AF;
+}
+
+body {
+    background-color: var(--bg-cream);
+    color: var(--text-dark);
+}
+
+.card, .stat-card, .project-card, .modal {
+    background: var(--card-bg);
+    border-color: var(--border-light);
+}
+
+.btn-primary {
+    background: var(--blue-pale);
+    color: var(--text-dark);
+}
+
+.btn-primary:hover {
+    background: var(--blue-pale-hover);
+}
+
+.btn-secondary {
+    background: var(--card-bg);
+    border-color: var(--border-light);
+    color: var(--text-dark);
+}
+
+.sidebar {
+    background: var(--bg-beige);
+}
+
+.nav-item {
+    color: var(--text-soft);
+}
+
+.nav-item:hover {
+    background: rgba(30, 58, 138, 0.1);
+    color: var(--navy-blue);
+}
+
+.nav-item.active {
+    background: var(--blue-pale);
+    color: var(--text-dark);
+}
+
+.progress-fill {
+    background: var(--blue-pale);
+}
+
+.badge-blue {
+    background: var(--blue-pale);
+    color: var(--text-dark);
+}
+
+input, select, textarea, .form-control {
+    border-color: var(--border-light);
+    background: var(--card-bg);
+}
+
+.app-header {
+    background: var(--card-bg);
+    border-bottom-color: var(--border-light);
+}
+
+/* Sidebar logo text color */
+.logo-text {
+    color: var(--navy-blue);
+}
+
+/* Navigation icons on hover */
+.nav-item:hover .nav-icon-img {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(89%) saturate(1807%) hue-rotate(212deg) brightness(92%) contrast(101%);
+}
+
+/* User card hover */
+.user-card:hover {
+    background: rgba(30, 58, 138, 0.1);
+}
+
+.user-card:hover .user-name {
+    color: var(--navy-blue);
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduPlan{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new_palette.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='img/favicon.svg') }}" alt="EduPlan Logo" class="logo-icon-img">
+            <span class="logo-text">EduPlan</span>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Navigation</div>
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
+                <img src="{{ url_for('static', filename='img/dashboardIcon.svg') }}" alt="Dashboard" class="nav-icon-img">
+                Tableau de bord
+            </a>
+            <a href="{{ url_for('projets') }}"
+               class="nav-item {% if active_page == 'projets' %}active{% endif %}">
+                <img src="{{ url_for('static', filename='img/listIcon.svg') }}" alt="Projets" class="nav-icon-img">
+                Mes Projets
+            </a>
+            <a href="{{ url_for('mes_taches') }}"
+               class="nav-item {% if active_page == 'taches' %}active{% endif %}">
+                <img src="{{ url_for('static', filename='img/badgeIcon.svg') }}" alt="Taches" class="nav-icon-img">
+                Mes Taches
+            </a>
+        </div>
+
+        {% if session.get('user_role') == 'administrateur' %}
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Administration</div>
+            <a href="{{ url_for('admin') }}"
+               class="nav-item {% if active_page == 'admin' %}active{% endif %}">
+                <img src="{{ url_for('static', filename='img/totalBookingIcon.svg') }}" alt="Admin" class="nav-icon-img">
+                Administration
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="sidebar-footer">
+            <a href="{{ url_for('profil') }}" class="user-card" style="text-decoration:none;">
+                <div class="user-avatar">
+                    {{ session.get('user_nom', 'U')[:2].upper() }}
+                </div>
+                <div class="user-info">
+                    <div class="user-name">{{ session.get('user_nom', 'Utilisateur') }}</div>
+                    <div class="user-role">
+                        {% if session.get('user_role') == 'administrateur' %}Admin{% else %}Membre{% endif %}
+                    </div>
+                </div>
+            </a>
+            <a href="{{ url_for('logout') }}" class="nav-item" style="margin-top:0.5rem;">
+                <img src="{{ url_for('static', filename='img/heartIcon.svg') }}" alt="Deconnexion" class="nav-icon-img">
+                Deconnexion
+            </a>
+        </div>
+    </aside>
+
+    <header class="app-header">
+        <button class="btn btn-secondary btn-sm menu-btn" id="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">Menu</button>
+        <div class="header-content">
+            {% block header_content %}{% endblock %}
+        </div>
+        <div class="header-actions">
+            {% block header_actions %}{% endblock %}
+        </div>
+    </header>
+
+    <main class="app-main">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+<footer class="app-footer">
+    Concu par NGLITANG Ruben - ENSPD - Projet Programmation web dynamique
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

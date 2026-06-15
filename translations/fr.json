@@ -1,0 +1,17 @@
+{
+    "app_name": "EduPlan",
+    "devise": "suivi-planning-tache",
+    "welcome_title": "Bienvenue sur EduPlan",
+    "choose_lang": "Choisissez votre langue",
+    "description_line1": "EduPlan vous aide à gérer vos projets étudiants simplement et efficacement.",
+    "description_line2": "Planifiez, suivez et réussissez vos travaux en équipe, du début à la livraison.",
+    "btn_signup": "S'inscrire",
+    "btn_login": "Se connecter",
+    "skip": "Passer la presentation",
+    "presentation_title": "A propos d'EduPlan",
+    "presentation_text": "EduPlan est une plateforme de gestion de projet concue pour les etudiants. Elle vous permet de creer des projets, d'assigner des taches, de suivre l'avancement et de collaborer avec votre equipe. Simple, intuitive et efficace.",
+    "footer_credit": "Concu par NGLITANG Ruben - ENSPD - Projet Programmation web dynamique"
+}
+
+
+
